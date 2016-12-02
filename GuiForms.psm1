@@ -33,7 +33,7 @@ Function New-GUIForm {
         $Form = New-Object System.Windows.Forms.Form    #creating the form (this will be the "primary" window)
         $Form.Size = New-Object System.Drawing.Size($Length,$Width)  #the size in px of the window length, height
 
-        $Form.Add_Shown({$Form.Activate()})
+        #$Form.Add_Shown({$Form.Activate()})
 
         Write-output $Form
     }
@@ -41,7 +41,7 @@ Function New-GUIForm {
 
 # --------------------------------------------------------------------------------
 
-Function Add-GUIFormInputBox {
+Function New-GUIFormInputBox {
     
 <# 
     .Synopsis
@@ -95,7 +95,7 @@ Function Add-GUIFormInputBox {
     [CmdletBinding()]
     Param (
         [Parameter ( Mandatory = $True )]
-        [System.Windows.Forms.Form]$Form,
+        [Ref]$Form,
 
         [Parameter ( Mandatory = $True )]
         [int]$X,
@@ -122,16 +122,16 @@ Function Add-GUIFormInputBox {
             
              # ----- Move the x coordinate of the input field the length of the string
             # ----- https://social.technet.microsoft.com/Forums/SharePoint/en-US/3843ddcc-e326-4e5e-808c-59abd4d4dcea/find-the-length-of-a-string-in-pixels?forum=winserverpowershell
-            $Font = New-Object System.Drawing.Font( $Form.Font.Name,$Form.Font.size )
+            $Font = New-Object System.Drawing.Font( $Form.value.Font.Name,$Form.value.Font.size )
             $Size = [System.WIndows.Forms.TextRenderer]::MeasureText($Title,$Font)
-            $InputX += $Size.Width+5
+            $InputX += $Size.Width + 5
 
             Write-Verbose "Setting Title = $Title"
             $TextTitle = New-Object System.Windows.Forms.Label 
             $TextTitle.Location = New-Object System.Drawing.Size($X,$Y)
             $TextTitle.Width = $Size.Width+5
             $TextTitle.Text = $Title
-            $Form.Controls.Add($TextTitle)
+            $Form.Value.Controls.Add($TextTitle)
            
         }
 
@@ -139,14 +139,98 @@ Function Add-GUIFormInputBox {
         $InputBox = New-Object System.Windows.Forms.TextBox 
         $InputBox.Location = New-Object System.Drawing.Size($InputX,$Y) #location of the text box (px) in relation to the primary window's edges (length, height)
         $InputBox.Size = New-Object System.Drawing.Size($Length,$Height) #the size in px of the text box (length, height)
-        #$InputBox.Text = "Hello"
-        $Form.Controls.Add($InputBox) #activating the text box inside the Primary WIndow
+        $Form.Value.Controls.Add($InputBox) #activating the text box inside the Primary WIndow
 
-        Write-Output $Form
+        
     }
 }
 
 # --------------------------------------------------------------------------------
+
+Function New-GUIFormButton {
+
+<#
+    .Synopsis
+        Creates a new Windows Form Button
+
+    .Description
+        Creates a Button on a windows Form. 
+
+    .Parameter Form
+        Windows Form the button will be displayed on.
+
+    .Parameter X
+        Left pixel in the window
+
+    .Parameter Y
+        Upper pixel in the window
+
+    .parameter Length
+        Button length
+
+    .Parameter Height
+        Button Height
+
+    .Parameter Label
+        Text displayed on the button
+
+    .Parameter Name
+        Name of the button
+
+    .Parameter Execute
+        Commands to execute when the button is pressed.
+
+    .Example
+        $Form = New-GUIForm -Length 600 -Width 400
+
+        $Check1Button_OnClick  = { Write-Host "Check1-Click, mach was.. " }
+        New-GUIFormButton -Form $Form -X 400 -y 30 -Length 110 -Height 80 -Label 'Save' -Execute $Check1Button_OnClick
+
+        $Form.add_Shown({$Form.Activate()})
+        [void] $Form.ShowDialog()
+
+    .Note
+        Author : Jeff Buenting
+        Date : 2016 DEC 02
+#>
+
+    [CmdletBinding()]
+    Param (
+        [Parameter ( Mandatory = $True )]
+        [System.Windows.Forms.Form]$Form,
+
+        [Parameter ( Mandatory = $True )]
+        [int]$X,
+
+        [Parameter ( Mandatory = $True )]
+        [Int]$Y,
+
+        [Parameter ( Mandatory = $True )]
+        [Int]$Length,
+        
+        [Parameter ( Mandatory = $True )]
+        [Int]$Height,
+
+        [Parameter ( Mandatory = $True )]
+        [String]$Label,
+
+        [string]$Name = $Label,
+
+        [Parameter ( Mandatory = $True ) ]
+        [ScriptBlock]$Execute
+        
+    )
+
+
+    $Button = New-Object System.Windows.Forms.Button
+    $Button.Location = New-Object System.Drawing.Size($x,$y)
+    $Button.Size = New-Object System.Drawing.Size($Length,$Height)
+    $Button.Name = $name
+    $Button.Text = $Label
+    $Button.Add_Click(  $Execute  )
+    $Form.Controls.Add($Button) 
+}
+
 # --------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------
