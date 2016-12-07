@@ -16,11 +16,13 @@ Function New-GUIForm {
 
     [CmdletBinding()]
     Param (
+        [String]$Title,
+
         [Parameter ( Mandatory = $True )]
         [String]$Length,
         
         [Parameter ( Mandatory = $True )]
-        [String]$Width
+        [String]$Height
     )
 
     Begin {
@@ -31,7 +33,8 @@ Function New-GUIForm {
     Process {
 
         $Form = New-Object System.Windows.Forms.Form    #creating the form (this will be the "primary" window)
-        $Form.Size = New-Object System.Drawing.Size($Length,$Width)  #the size in px of the window length, height
+        $Form.Size = New-Object System.Drawing.Size($Length,$Height)  #the size in px of the window length, height
+        $Form.Text = $Title
 
         #$Form.Add_Shown({$Form.Activate()})
 
@@ -126,7 +129,6 @@ Function New-GUIFormInputBox {
             $Size = [System.WIndows.Forms.TextRenderer]::MeasureText($Title,$Font)
             $InputX += $Size.Width + 5
 
-            Write-Verbose "Setting Title = $Title"
             $TextTitle = New-Object System.Windows.Forms.Label 
             $TextTitle.Location = New-Object System.Drawing.Size($X,$Y)
             $TextTitle.Width = $Size.Width+5
@@ -135,13 +137,12 @@ Function New-GUIFormInputBox {
            
         }
 
-        Write-Verbose "Input Box X = $InputX"
         $InputBox = New-Object System.Windows.Forms.TextBox 
         $InputBox.Location = New-Object System.Drawing.Size($InputX,$Y) #location of the text box (px) in relation to the primary window's edges (length, height)
         $InputBox.Size = New-Object System.Drawing.Size($Length,$Height) #the size in px of the text box (length, height)
         $Form.Value.Controls.Add($InputBox) #activating the text box inside the Primary WIndow
 
-        
+        Write-Output $InputBox
     }
 }
 
@@ -216,6 +217,8 @@ Function New-GUIFormButton {
 
         [string]$Name = $Label,
 
+        
+
         [Parameter ( Mandatory = $True ) ]
         [ScriptBlock]$Execute
         
@@ -227,11 +230,86 @@ Function New-GUIFormButton {
     $Button.Size = New-Object System.Drawing.Size($Length,$Height)
     $Button.Name = $name
     $Button.Text = $Label
-    $Button.Add_Click(  $Execute  )
+    $Button.Add_Click( $Execute )
+    $Button.Cursor = [System.Windows.Forms.Cursors]::Hand
     $Form.Controls.Add($Button) 
 }
 
 # --------------------------------------------------------------------------------
+
+Function New-GUIFormGroupBox {
+    
+    <#
+        .Synopsis
+            Allows grouping of objects in a windows form
+
+        .Description 
+            Creates a group box in a windows form.  Group boxes allow controls to be grouped.  
+
+        .Parameter Form
+            Windows Form
+
+        .Parameter X
+            left coordinate for the upper left corner
+
+        .Parameter Y
+            Upper Coordinate for the upper left corner
+
+        .Parameter Width
+            Width of the box
+
+        .Parameter Height
+            Height of the box
+
+        .Parameter Title
+            Title of the box
+
+        .Example
+            Create a group box inside of a form
+
+            $WinLength = 600
+            $WinHeight = 400
+
+            $Form = New-GUIForm -Title 'StratusLive Install' -Length $WinLength -Height $WinHeight
+
+            $ServerX = 10
+            $ServerY = 10
+            $Servers = New-GUIFormGroupBox -Form ([Ref]$Form) -Title "Servers" -X $ServerX -Y $ServerY -width 250 -Height 100
+
+        .Link
+            https://sysadminemporium.wordpress.com/2012/12/07/powershell-gui-for-your-scripts-episode-3/
+
+        .Note
+            Author : Jeff Buenting
+            Date : 2016 Dec 07
+    #>
+
+    [CmdletBinding()]
+    Param (
+        [Parameter ( Mandatory = $True )]
+        [Ref]$Form,
+
+        [Int]$X,
+
+        [Int]$Y,
+
+        [int]$Width,
+
+        [int]$Height,
+
+        [String]$Title
+    )
+
+    $groupBox = New-Object System.Windows.Forms.GroupBox 
+    $groupBox.Location = New-Object System.Drawing.Size($X,$Y) 
+    $groupBox.size = New-Object System.Drawing.Size($Width,$Height) 
+    $groupBox.text = $Title 
+
+    $Form.value.Controls.Add($groupBox)
+
+    Write-Output $groupBox
+}
+
 # --------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------
