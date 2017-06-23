@@ -34,6 +34,7 @@ $ADFSServerInput = New-GUIFormInputBox -Form ([Ref]$Servers) -x ($ServerX+5) -Y 
 $Sources = New-GUIFormGroupBox -Form ([Ref]$Form) -Title "Sources" -X ($ServerX+260) -Y $ServerY -width 500 -Height 100
 
 $CRM2016ISOInput = New-GUIFormInputBox -Form ([ref]$Sources) -x (10) -Y (20) -Length 400 -Height 20 -Title "CRM 2016 ISO" -verbose
+$CRM2016ISOInput = New-GUIFormInputBox -Form ([ref]$Sources) -x (10) -Y (20) -Length 400 -Height 20 -Title "CRM 2016 ISO" -verbose
 
 # ----- Buttons
 New-GUIFormButton -Form $Form -X ($Form.ClientRectangle.Width-120) -y ($Form.ClientRectangle.Height-60) -Length 110 -Height 50 -Label 'Save' -Execute { $Form.Close() }
@@ -46,6 +47,8 @@ $Form.add_Shown({$Form.Activate()})
 $CRMServer = $CRMServerInput.text
 $SQLServer = $SQLServerInput.Text
 $ADFSServer = $ADFSServerInput.Text
+
+$CRM2016Source = $CRM2016ISOInput.Text
 
 Write-Output "CRMServer = $CRMServer"
 Write-Output "SQLServer = $SQLServer"
