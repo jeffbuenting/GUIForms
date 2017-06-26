@@ -207,7 +207,7 @@ Function New-GUIFormButton {
         $Form.add_Shown({$Form.Activate()})
         [void] $Form.ShowDialog()
 
-    .Note
+    .Notes
         Author : Jeff Buenting
         Date : 2016 DEC 02
 #>
