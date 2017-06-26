@@ -194,6 +194,15 @@ Describe New-GUIFormButton {
     } 
 
     Context Output {
-        # ----- Need to figure out how to check that $Form has been updated.
+        $Form = New-GUIForm -Length 600 -Height 300 -Title Form
+        New-GUIFormButton -Form $Form -X ($Form.ClientRectangle.Width-120) -y ($Form.ClientRectangle.Height-60) -Length 110 -Height 50 -Label 'Save' -Execute { $Form.Close() }
+        
+        It "Without Title should only have one control" {
+            $Form.Controls.Count | Should Be 1
+        }
+
+        It "Without Title should have a control of type Button" {
+            $Form.Controls | Should BeOfType System.Windows.Forms.ButtonBase
+        }
     }
 }
