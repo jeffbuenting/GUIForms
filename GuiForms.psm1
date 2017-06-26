@@ -1,16 +1,42 @@
 ﻿# --------------------------------------------------------------------------------
 
-Function New-GUIFormWindow {
+Function New-GuiForm {
+
+<#
+    .Synopsis
+        Creates a new Gui Form
+
+    .Description
+        Creates a new Gui Form Window.  Once the windows object is created, different textboxes and buttons can be added.  Primarily used for input.
+
+    .Parameter Length
+        Length of the Window.
+
+    .parameter Height
+        Heigght of the Window.
+
+    .Example
+        Creates a new Form Window
+
+        $Form = New-GuiForm -Title "Questionaire" -Length 300 -Height 500
+
+    .Link
+        https://sysadminemporium.wordpress.com/2012/11/26/powershell-gui-front-end-for-your-scripts-episode-1/
+
+    .Notes
+        Author : Jeff Buenting
+        Date : 2017 JUN 23
+#>
 
     [CmdletBinding()]
     Param (
         [String]$Title,
 
-        [Parameter ( Mandatory = $True )]
-        [String]$Length,
+            [Parameter ( Mandatory = $True )]
+            [String]$Length,
         
-        [Parameter ( Mandatory = $True )]
-        [String]$Height
+            [Parameter ( Mandatory = $True )]
+            [String]$Height
     )
 
     Begin {
@@ -28,6 +54,7 @@ Function New-GUIFormWindow {
 
         Write-output $Form
     }
+
 }
 
 # --------------------------------------------------------------------------------
@@ -57,14 +84,16 @@ Function New-GUIFormInputBox {
         Length of the input box
 
     .parameter Height
-        Height of the Input Box
+        Height of the Input Box 
 
-    .Example
-        $Form = New-GUIWindow -Length 600 -Width 400
+     .Example
+        Create a Input box called Testing
 
-        $Form = Add-GUIFormTextBox -Form $Form -x 20 -Y 50 -Length 150 -Height 20 -Title "Testing" -verbose
+        $Form = New-GUIForm -Length 600 -Width 400
 
-        [void] $Form.ShowDialog() 
+        $Form = Add-GUIFormTextBox -Form ([ref]$Servers) -x 20 -Y 50 -Length 150 -Height 20 -Title "Testing" -verbose
+
+        [void] $Form.ShowDialog()
 
     .Link
         Text box form example
@@ -78,7 +107,7 @@ Function New-GUIFormInputBox {
         Label Class
         https://msdn.microsoft.com/en-us/library/system.windows.forms.label(v=vs.110).aspx
 
-    .Note 
+    .Notes
         Author : Jeff Buenting
         Date : 2016 DEC 02
 #>
