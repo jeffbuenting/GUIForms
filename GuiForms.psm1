@@ -294,7 +294,7 @@ Function New-GUIFormGroupBox {
         .Link
             https://sysadminemporium.wordpress.com/2012/12/07/powershell-gui-for-your-scripts-episode-3/
 
-        .Note
+        .Notes
             Author : Jeff Buenting
             Date : 2016 Dec 07
     #>

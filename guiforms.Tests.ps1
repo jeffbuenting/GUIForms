@@ -4,10 +4,9 @@ $ModulePath = "f:\github\guiforms"
 $ModuleName = $ModulePath | Split-Path -Leaf
 
 # ----- Remove and then import the module.  This is so any new changes are imported.
-Get-Module -Name $ModuleName -All | Remove-Module -Force -verbose
+Get-Module -Name $ModuleName -All | Remove-Module -Force 
 
-Import-Module "$ModulePath\$ModuleName.PSD1" -Force -ErrorAction Stop -verbose
-
+Import-Module "$ModulePath\$ModuleName.PSD1" -Force -ErrorAction Stop 
 #-------------------------------------------------------------------------------------
 
 Describe "New-GUIForm" {
@@ -197,12 +196,73 @@ Describe New-GUIFormButton {
         $Form = New-GUIForm -Length 600 -Height 300 -Title Form
         New-GUIFormButton -Form $Form -X ($Form.ClientRectangle.Width-120) -y ($Form.ClientRectangle.Height-60) -Length 110 -Height 50 -Label 'Save' -Execute { $Form.Close() }
         
-        It "Without Title should only have one control" {
+        It "Adds only one control to the Form" {
             $Form.Controls.Count | Should Be 1
         }
 
-        It "Without Title should have a control of type Button" {
+        It "Adds a control of type Button" {
             $Form.Controls | Should BeOfType System.Windows.Forms.ButtonBase
+        }
+    }
+}
+
+# --------------------------------------------------------------------------------
+write-Output "`n`n"
+
+Describe New-GUIFormGroupBox {
+        # ----- Get Function Help
+    # ----- Pester to test Comment based help
+    # ----- http://www.lazywinadmin.com/2016/05/using-pester-to-test-your-comment-based.html
+    Context "Help" {
+
+        $H = Help New-GUIFormGroupBox -Full
+
+        # ----- Help Tests
+        It "has Synopsis Help Section" {
+            $H.Synopsis | Should Not BeNullorEmpty
+        }
+
+        It "has Description Help Section" {
+            $H.Description | Should Not BeNullorEmpty
+        }
+
+        It "has Parameters Help Section" {
+            $H.Parameters | Should Not BeNullorEmpty
+        }
+
+        # Examples
+        it "Example - Count should be greater than 0"{
+            $H.examples.example.code.count | Should BeGreaterthan 0
+        }
+            
+        # Examples - Remarks (small description that comes with the example)
+        foreach ($Example in $H.examples.example)
+        {
+            it "Example - Remarks on $($Example.Title)"{
+                $Example.remarks | Should not BeNullOrEmpty
+            }
+        }
+
+        It "has Notes Help Section" {
+            $H.alertSet | Should Not BeNullorEmpty
+        }
+    } 
+
+    Context Output {
+        $F = New-GuiForm -Title 'Test' -Length 100 -Height 20
+        $GB = New-GUIFormGroupBox -Form ([Ref]$F) -Title "GB 1" -X ($ServerX+260) -Y $ServerY -width 500 -Height 100
+
+        It "Adds only one control to the Form" {
+            $F.Controls.Count | Should Be 1
+        }
+
+        It "Adds a control of type Control" {
+            $F.Controls | Should BeOfType System.Windows.Forms.Control
+        }
+
+        It "Returns a GroupBox object" {
+
+            $GB | Should BeofType System.Windows.Forms.GroupBox
         }
     }
 }
