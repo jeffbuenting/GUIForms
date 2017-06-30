@@ -326,5 +326,39 @@ Function New-GUIFormGroupBox {
 }
 
 # --------------------------------------------------------------------------------
+
+Function Show-GUIForm {
+
+<#
+    .Synopsis
+        Show Form.
+
+    .Description
+        Shows and Activates a Windows Form.
+
+    .Parameter Form
+        Windows Form to show.
+
+    .Example
+        Build the form and display the form.
+
+        $Form = New-GUIForm -Length 600 -Height 300 -Title Form
+        Show-GUIForm -Form ([Ref]$Form)
+
+    .Notes
+        Author : Jeff Buenting
+        Date : 2017 JUN 30
+#>
+    
+    [CmdletBinding()]
+    Param (
+        [Parameter ( Mandatory = $True )]
+        [System.windows.forms.form]$Form
+    )
+
+   # $Form.add_Shown({$Form.Activate()})
+     $Form.ShowDialog()
+}
+
 # --------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------

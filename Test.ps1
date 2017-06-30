@@ -39,8 +39,9 @@ $CRM2016ISOInput = New-GUIFormInputBox -Form ([ref]$Sources) -x (10) -Y (20) -Le
 # ----- Buttons
 New-GUIFormButton -Form $Form -X ($Form.ClientRectangle.Width-120) -y ($Form.ClientRectangle.Height-60) -Length 110 -Height 50 -Label 'Save' -Execute { $Form.Close() }
 
-$Form.add_Shown({$Form.Activate()})
-[void] $Form.ShowDialog()
+####$Form.add_Shown({$Form.Activate()})
+#[void] $Form.ShowDialog()
+Show-GUIForm ($Form)
 
 # ----- Get the Data after the save button clicked.
 
