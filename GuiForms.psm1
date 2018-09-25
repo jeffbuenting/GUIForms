@@ -32,11 +32,11 @@ Function New-GuiForm {
     Param (
         [String]$Title,
 
-            [Parameter ( Mandatory = $True )]
-            [String]$Length,
+        [Parameter ( Mandatory = $True )]
+        [String]$Length,
         
-            [Parameter ( Mandatory = $True )]
-            [String]$Height
+        [Parameter ( Mandatory = $True )]
+        [String]$Height
     )
 
     Begin {
@@ -54,7 +54,6 @@ Function New-GuiForm {
 
         Write-output $Form
     }
-
 }
 
 # --------------------------------------------------------------------------------
@@ -270,7 +269,7 @@ Function New-GUIFormGroupBox {
         .Parameter Y
             Upper Coordinate for the upper left corner
 
-        .Parameter Width
+        .Parameter Length
             Width of the box
 
         .Parameter Height
@@ -308,7 +307,7 @@ Function New-GUIFormGroupBox {
 
         [Int]$Y,
 
-        [int]$Width,
+        [int]$Length,
 
         [int]$Height,
 
@@ -319,6 +318,7 @@ Function New-GUIFormGroupBox {
     $groupBox.Location = New-Object System.Drawing.Size($X,$Y) 
     $groupBox.size = New-Object System.Drawing.Size($Width,$Height) 
     $groupBox.text = $Title 
+    #$GroupBox.Focused = $True
 
     $Form.value.Controls.Add($groupBox)
 
@@ -357,7 +357,7 @@ Function Show-GUIForm {
     )
 
    # $Form.add_Shown({$Form.Activate()})
-     $Form.ShowDialog()
+     Write-Output $Form.ShowDialog()
 }
 
 # --------------------------------------------------------------------------------

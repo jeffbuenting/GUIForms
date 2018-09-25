@@ -7,9 +7,30 @@ $ModuleName = $ModulePath | Split-Path -Leaf
 Get-Module -Name $ModuleName -All | Remove-Module -Force 
 
 Import-Module "$ModulePath\$ModuleName.PSD1" -Force -ErrorAction Stop 
+
+#-------------------------------------------------------------------------------------
+# ----- Check if all fucntions in the module have a unit tests
+
+Describe "$ModuleName : Module Tests" {
+
+    $Module = Get-module -Name $ModuleName
+
+    $testFile = Get-ChildItem $module.ModuleBase -Filter '*.Tests.ps1' -File
+    
+    $testNames = Select-String -Path $testFile.FullName -Pattern '[D|d]escribe\s[^\$](.+)?\s+{' | ForEach-Object {
+        [System.Management.Automation.PSParser]::Tokenize($_.Matches.Groups[1].Value, [ref]$null).Content
+    }
+
+    $moduleCommandNames = (Get-Command -Module $ModuleName | where commandtype -ne alias  )
+
+    it 'should have a test for each function' {
+        Compare-Object $moduleCommandNames $testNames | where { $_.SideIndicator -eq '<=' } | select inputobject | should beNullOrEmpty
+    }
+}
+
 #-------------------------------------------------------------------------------------
 
-Describe "New-GUIForm" {
+Describe "$ModuleName : New-GUIForm" {
 
     # ----- Get Function Help
     # ----- Pester to test Comment based help
@@ -61,7 +82,7 @@ Describe "New-GUIForm" {
 #-------------------------------------------------------------------------------------
 write-Output "`n`n"
 
-Describe "New-GUIFormInputBox" {
+Describe "$ModuleName : New-GUIFormInputBox" {
 
     # ----- Get Function Help
     # ----- Pester to test Comment based help
@@ -153,7 +174,7 @@ Describe "New-GUIFormInputBox" {
 # --------------------------------------------------------------------------------
 write-Output "`n`n"
 
-Describe New-GUIFormButton {
+Describe "$ModuleName : New-GUIFormButton" {
         # ----- Get Function Help
     # ----- Pester to test Comment based help
     # ----- http://www.lazywinadmin.com/2016/05/using-pester-to-test-your-comment-based.html
@@ -209,7 +230,7 @@ Describe New-GUIFormButton {
 # --------------------------------------------------------------------------------
 write-Output "`n`n"
 
-Describe New-GUIFormGroupBox {
+Describe "$ModuleName : New-GUIFormGroupBox" {
         # ----- Get Function Help
     # ----- Pester to test Comment based help
     # ----- http://www.lazywinadmin.com/2016/05/using-pester-to-test-your-comment-based.html
@@ -250,7 +271,7 @@ Describe New-GUIFormGroupBox {
 
     Context Output {
         $F = New-GuiForm -Title 'Test' -Length 100 -Height 20
-        $GB = New-GUIFormGroupBox -Form ([Ref]$F) -Title "GB 1" -X ($ServerX+260) -Y $ServerY -width 500 -Height 100
+        $GB = New-GUIFormGroupBox -Form ([Ref]$F) -Title "GB 1" -X ($ServerX+260) -Y $ServerY -Length 500 -Height 100
 
         It "Adds only one control to the Form" {
             $F.Controls.Count | Should Be 1
@@ -270,7 +291,7 @@ Describe New-GUIFormGroupBox {
 # --------------------------------------------------------------------------------
 write-Output "`n`n"
 
-Describe Show-GUIForm {
+Describe "$ModuleName : Show-GUIForm" {
         # ----- Get Function Help
     # ----- Pester to test Comment based help
     # ----- http://www.lazywinadmin.com/2016/05/using-pester-to-test-your-comment-based.html
